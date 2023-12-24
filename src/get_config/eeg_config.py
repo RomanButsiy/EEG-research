@@ -23,6 +23,7 @@ class EEGConfig:
         self.file_name = config[config_block]["file_name"].strip()
         self.multiplier = float(config[config_block]["multiplier"].strip())
         self.data_type = config[config_block]["data_type"].strip()
+        self.sigma = [float(x) for x in config[config_block]["sigma"].strip().split(',')]
         self.config_block = config_block
         self.data_path = config["DEFAULT"]["data_path"].strip()
         self.img_path = config["DEFAULT"]["img_path"].strip()
@@ -44,6 +45,9 @@ class EEGConfig:
     
     def getImgPath(self):
         return self.img_path
+    
+    def getSigma(self):
+        return self.sigma
 
     def __str__(self):
         logger.debug("toString {}", self.config_block)

@@ -5,7 +5,7 @@ import numpy as np
 
 class ConfusionMatrix():
     
-    def __init__(self, y_true, y_pred):
+    def __init__(self, y_true, y_pred, ltime, ttime):
 
         CM = confusion_matrix(y_true, y_pred)
         TN, FP, FN, TP = CM.ravel()
@@ -98,6 +98,8 @@ class ConfusionMatrix():
         self.BM = BM
         self.MK = MK
         self.DPR = DPR
+        self.ltime = ltime
+        self.ttime = ttime
 
     def getCM(self):
         return self.CM
@@ -173,10 +175,10 @@ class ConfusionMatrix():
 
     def getDPR(self):
         return self.DPR
-
+    
     def getAllVariables(self):
         return [
-            self.TP, self.TN, self.FP, self.FN, self.TPR, self.TNR, self.PPV, self.NPV,
+            self.TPR, self.TNR, self.PPV, self.NPV,
             self.FNR, self.FPR, self.FDR, self.FOR, self.LR_P_, self.LR_N_, self.PT, self.TS,
-            self.ACC, self.BA, self.F1, self.MCC, self.FM, self.BM, self.MK, self.DPR
+            self.ACC, self.BA, self.F1, self.MCC, self.FM, self.BM, self.MK, self.DPR, np.round(self.ltime, 3), np.round(self.ttime, 3)
         ]

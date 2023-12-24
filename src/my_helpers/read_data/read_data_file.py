@@ -27,15 +27,18 @@ class ReadDataFile:
         self.D_c = eeg_fr["D_c"]
         self.D_z = eeg_fr["D_z"]
 
-        self.matrix_passivity = [[],[],[]]
-        self.matrix_activity = [[],[],[]]
+        self.matrix_passivity = [[] for _ in range(len(self.signals))]
+        self.matrix_activity = [[] for _ in range(len(self.signals))]
 
-        for channel_number in range(len(self.signals)):
+        D_c_scaled = [(dc - 1) * self.sampling_rate for dc in self.D_c]
+        D_z_scaled = [(dz - 1) * self.sampling_rate for dz in self.D_z]
+
+        for channel_number, signal in enumerate(self.signals):
             for i in range(len(self.D_z) - 1):
-                start = int((self.D_c[i] - 1) * self.sampling_rate)
-                end = int((self.D_z[i] - 1) * self.sampling_rate)
-                self.matrix_passivity[channel_number].append(self.signals[channel_number][start:end])
+                passivity_start = int(D_c_scaled[i])
+                passivity_end = int(D_z_scaled[i])
+                self.matrix_passivity[channel_number].append(signal[passivity_start:passivity_end])
 
-                start = int((self.D_z[i] - 1) * self.sampling_rate)
-                end = int((self.D_c[i + 1] - 1) * self.sampling_rate)
-                self.matrix_activity[channel_number].append(self.signals[channel_number][start:end])
+                activity_start = int(D_z_scaled[i])
+                activity_end = int(D_c_scaled[i + 1])
+                self.matrix_activity[channel_number].append(signal[activity_start:activity_end])

@@ -3,8 +3,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+Confusion\ matrix/
+
 # C extensions
 *.so
+
+# img/
+/img/*
+/img/*/*
+!/img/*/
+!/img/*/function_rhythm.csv
 
 # Distribution / packaging
 .Python
@@ -127,6 +135,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.vscode/
 
 # Spyder project settings
 .spyderproject

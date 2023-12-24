@@ -25,7 +25,8 @@ class EEGConfigConfig(ConfigParser):
             '%s' % (config_block): {
                 'file_name': None,
                 'multiplier': None,
-                'data_type': ('openbci')
+                'data_type': ('openbci'),
+                'sigma': None
             }
         }
 

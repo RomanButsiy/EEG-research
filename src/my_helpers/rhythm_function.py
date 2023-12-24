@@ -44,8 +44,8 @@ class RhythmFunction(ReadDataFile):
         axis.plot(T1_X, T1_Y, linewidth=2)
         axis.set_xlabel("$t, s$", loc = 'right')
         axis.legend(['$T(t, 1), s$'])
-        axis.axis(ymin = 0, ymax = 5)
-        axis.axis(xmin = 0)
+        axis.axis(ymin = 0, ymax = round(np.max(T1_Y)) + 0.5)
+        axis.axis(xmin = T1_X[0], xmax = T1_X[-1])
         plt.savefig(f"{self.plot_path}/function_rhythm.png", dpi=300)
 
     def plotEEG(self):
@@ -54,7 +54,7 @@ class RhythmFunction(ReadDataFile):
         self.getData()
 
         f, axis = plt.subplots(len(self.signals))
-        f.tight_layout()
+        f.tight_layout() 
         f.set_size_inches(17, 9)
         time = np.arange(0, len(self.signals[0]), 1) / 250
 

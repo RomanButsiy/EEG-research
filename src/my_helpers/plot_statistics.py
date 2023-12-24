@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 from loguru import logger
+import neurokit2 as nk
+import pandas as pd
 
 class PlotStatistics():
     def __init__(self, statistics, sampling_rate, ecg_config, zone_type):
@@ -23,10 +25,10 @@ class PlotStatistics():
         self.plot_to_png([statistic.getVariance() for statistic in mathematical_statistics], f"5 Variance {self.zone_type}", xtext=xtext, ytext=r"$d_{{\xi {}}} (t), \mu V^2$")
         self.plot_to_png([statistic.getCentralMomentFunctionsFourthOrder() for statistic in mathematical_statistics], f"6 Central Moment Functions Fourth Order {self.zone_type}",  xtext=xtext, ytext=r"$d_{{\xi {}}} (t), \mu V^4$")
  
-        # self.plot_to_csv(mathematical_statistics.getMathematicalExpectation(), "1 Mathematical Expectation")
-        # self.plot_to_csv(mathematical_statistics.getInitialMomentsSecondOrder(), "2 Initial Moments Second Order")
-        # self.plot_to_csv(mathematical_statistics.getInitialMomentsThirdOrder(), "3 Initial Moments Third Order")
-        # self.plot_to_csv(mathematical_statistics.getInitialMomentsFourthOrder(), "4 Initial Moments Fourth Order")
+        self.plot_to_csv([statistic.getMathematicalExpectation() for statistic in mathematical_statistics], f"1 Mathematical Expectation {self.zone_type}")
+        self.plot_to_csv([statistic.getInitialMomentsSecondOrder() for statistic in mathematical_statistics], f"2 Initial Moments Second Order {self.zone_type}")
+        self.plot_to_csv([statistic.getInitialMomentsThirdOrder() for statistic in mathematical_statistics], f"3 Initial Moments Third Order {self.zone_type}")
+        self.plot_to_csv([statistic.getInitialMomentsFourthOrder() for statistic in mathematical_statistics], f"4 Initial Moments Fourth Order {self.zone_type}")
         # self.plot_to_csv(mathematical_statistics.getVariance(), "5 Variance")
         # self.plot_to_csv(mathematical_statistics.getCentralMomentFunctionsFourthOrder(), "6 Central Moment Functions Fourth Order")
 
@@ -104,13 +106,14 @@ class PlotStatistics():
                 axis[i].axis(ymin = ylim[0], ymax = ylim[1])
         plt.savefig(f'{path}/{name}.png', dpi=300)
 
-    # def plot_to_csv(self, plot, name):
-    #     logger.info(f"Save {name}.csv")
-    #     path = f'{self.plot_path}/Mathematical Statistics/CSV'
-    #     Path(path).mkdir(parents=True, exist_ok=True)
-    #     time = np.arange(0, len(plot), 1) / self.sampling_rate
-    #     data = pd.DataFrame({"Time" : time, "Data" : plot})
-    #     nk.write_csv(data, f'{path}/{name}.csv')
+    def plot_to_csv(self, plot, name):
+        logger.info(f"Save {name}.csv")
+        path = f'{self.plot_path}/Mathematical Statistics/CSV'
+        Path(path).mkdir(parents=True, exist_ok=True)
+        plot = np.transpose(plot)
+        time = np.arange(0, len(plot), 1) / self.sampling_rate
+        data = pd.DataFrame({'Time': time, **{f'Data_{i}': plot[:, i] for i in range(plot.shape[1])}})
+        nk.write_csv(data, f'{path}/{name}.csv')
 
     # def fs_plot_to_csv(self, plot2, name):
     #     an, bn = plot2

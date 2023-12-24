@@ -11,25 +11,25 @@ class DataPreparation(ReadDataFile):
 
         self.mod_sampling_rate = int(self.sampling_rate * self.eeg_config.getMultiplier())
 
-        matrix_passivity_size = self.getNewMatrixSize(self.matrix_passivity[0])
-        matrix_activity_size = self.getNewMatrixSize(self.matrix_activity[0])
         matrix_activity_size = matrix_passivity_size = self.mod_sampling_rate
 
-        self.interp_matrix_passivity = [[],[],[]]
-        self.interp_matrix_activity = [[],[],[]]
+        self.interp_matrix_passivity = [[] for _ in range(len(self.signals))]
+        self.interp_matrix_activity = [[] for _ in range(len(self.signals))]
 
-        for channel_number in range(len(self.signals)):
-            for i in range(len(self.matrix_passivity[channel_number])):
-                arr = np.array(self.matrix_passivity[channel_number][i])
-                arr_interp = interp.interp1d(np.arange(arr.size), arr)
-                arr_stretch = arr_interp(np.linspace(0, arr.size - 1, matrix_passivity_size))
-                self.interp_matrix_passivity[channel_number].append(arr_stretch)
+        self.interp_matrix_passivity = self.interp_matrix(self.matrix_passivity, matrix_passivity_size)
+        self.interp_matrix_activity = self.interp_matrix(self.matrix_activity, matrix_activity_size)
 
-            for i in range(len(self.matrix_activity[channel_number])):
-                arr = np.array(self.matrix_activity[channel_number][i])
+    def interp_matrix(self, matrix, size):
+        interpolated_matrix = []
+        for channel in matrix:
+            interp_channel = []
+            for segment in channel:
+                arr = np.array(segment)
                 arr_interp = interp.interp1d(np.arange(arr.size), arr)
-                arr_stretch = arr_interp(np.linspace(0, arr.size - 1, matrix_activity_size))
-                self.interp_matrix_activity[channel_number].append(arr_stretch)
+                arr_stretch = arr_interp(np.linspace(0, arr.size - 1, size))
+                interp_channel.append(arr_stretch)
+            interpolated_matrix.append(interp_channel)
+        return interpolated_matrix
 
     def getNewMatrixSize(self, matrix):
         n = 0
